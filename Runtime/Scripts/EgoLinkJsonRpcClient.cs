@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Networking;
 
-namespace Donkey
+namespace Yvonta
 {
     // --- Data Transfer Objects (Generic) ---
 
@@ -53,13 +53,13 @@ namespace Donkey
 
     // --- Core Client Service ---
 
-    public class DonkeyJsonRpcClient
+    public class EgoLinkJsonRpcClient
     {
         private readonly string _endpointUrl;
         private readonly int _timeoutSeconds;
         private int _requestIdCounter = 1;
 
-        public DonkeyJsonRpcClient(string endpointUrl, int timeoutSeconds = 10)
+        public EgoLinkJsonRpcClient(string endpointUrl, int timeoutSeconds = 10)
         {
             _endpointUrl = endpointUrl;
             _timeoutSeconds = timeoutSeconds;

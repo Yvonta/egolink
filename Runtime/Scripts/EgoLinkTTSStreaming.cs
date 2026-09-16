@@ -22,11 +22,11 @@ namespace Yvonta
 
         private Queue<SentenceItem> sentenceQueue = new Queue<SentenceItem>();
         private bool isProcessingQueue = false;
-        private TextLanguageDetector languageDetector;
+        private EgoLinkLanguageDetector languageDetector;
 
         private void Start()
         {
-            languageDetector = new TextLanguageDetector();
+            languageDetector = new EgoLinkLanguageDetector();
         }
 
         private void Awake()
@@ -65,10 +65,10 @@ namespace Yvonta
             }
             else
             {
-                string clean = EmojiRemover.RemoveEmojis(sentence);
-                clean = StringHelper.RemoveNonVisibleChars(clean);
-                clean = StringHelper.FilterAsterisks(clean);
-                clean = StringHelper.FilterNewline(clean);
+                string clean = EgoLinkStringHelper.RemoveEmojis(sentence);
+                clean = EgoLinkStringHelper.RemoveNonVisibleChars(clean);
+                clean = EgoLinkStringHelper.FilterAsterisks(clean);
+                clean = EgoLinkStringHelper.FilterNewline(clean);
 
                 if (string.IsNullOrWhiteSpace(clean)) return;
 

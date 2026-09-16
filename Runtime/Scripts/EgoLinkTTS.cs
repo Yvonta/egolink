@@ -4,9 +4,9 @@ using System.IO;
 using UnityEngine;
 using UnityEngine.Networking;
 
-namespace Donkey
+namespace Yvonta
 {
-    public class DonkeyTTS : MonoBehaviour
+    public class EgoLinkTTS : MonoBehaviour
     {
         string serverUrl = "https://yvonta.net/appapi/v2/tts.php";
         
@@ -23,9 +23,9 @@ namespace Donkey
 
         public int GetBufferedClipCount() => playQueue.Count;
 
-        private DonkeySession session;
+        private EgoLinkSession session;
 
-        public void Initialize(DonkeySession session)
+        public void Initialize(EgoLinkSession session)
         {
             this.session = session;
         }
@@ -78,11 +78,11 @@ namespace Donkey
                         : $"SESSION={session.StoredCookie}";
 
                     www.SetRequestHeader("Cookie", cookieHeader);
-                    Debug.Log($"[DonkeySTT] Sending Header -> Cookie: {cookieHeader}");
+                    Debug.Log($"[EgoLinkSTT] Sending Header -> Cookie: {cookieHeader}");
                 }
                 else
                 {
-                    Debug.LogWarning("[DonkeySTT] Request sent without session cookie! (Session was null or empty)");
+                    Debug.LogWarning("[EgoLinkSTT] Request sent without session cookie! (Session was null or empty)");
                 }
 
                 yield return www.SendWebRequest();
@@ -98,12 +98,12 @@ namespace Donkey
                     }
                     else
                     {
-                        Debug.LogError($"[DonkeyTTS] Received invalid audio clip for: '{text}'");
+                        Debug.LogError($"[EgoLinkTTS] Received invalid audio clip for: '{text}'");
                     }
                 }
                 else
                 {
-                    Debug.LogError($"[DonkeyTTS] Request failed: {www.error}");
+                    Debug.LogError($"[EgoLinkTTS] Request failed: {www.error}");
                 }
             }
 
@@ -118,7 +118,7 @@ namespace Donkey
             string text = subtitleQueue.Dequeue();
             audioSource.clip = clip;
             audioSource.Play();
-            SubtitleManager.Instance.DisplaySubtitle(text);
+            EgoLinkSubtitles.Instance.DisplaySubtitle(text);
 
             return clip.length;
         }

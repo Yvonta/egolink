@@ -5,14 +5,14 @@ using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Networking;
 
-namespace Donkey
+namespace Yvonta
 {
-    public class DonkeyAvatar
+    public class EgoLinkAvatar
     {
         private readonly string _avatarGenUrl;
         private readonly string _clothingUrl;
         private readonly string _hairUrl;
-        private readonly DonkeySession _session;
+        private readonly EgoLinkSession _session;
 
         public string AvatarId { get; private set; }
         public byte[] AvatarGlbData { get; private set; }
@@ -25,7 +25,7 @@ namespace Donkey
             public byte[] GlbData { get; set; }
         }
 
-        public DonkeyAvatar(string avatarGenUrl, string clothingUrl, string hairUrl, DonkeySession session)
+        public EgoLinkAvatar(string avatarGenUrl, string clothingUrl, string hairUrl, EgoLinkSession session)
         {
             _avatarGenUrl = avatarGenUrl;
             _clothingUrl = clothingUrl;
@@ -58,12 +58,12 @@ namespace Donkey
                     // Assign a generic or cached identifier
                     AvatarId = "cached_avatar";
 
-                    Debug.Log("[DonkeyAvatar] Successfully loaded avatar, clothing, and hair from local cache.");
+                    Debug.Log("[EgoLinkAvatar] Successfully loaded avatar, clothing, and hair from local cache.");
                     return true;
                 }
                 catch (Exception ex)
                 {
-                    Debug.LogWarning($"[DonkeyAvatar] Failed to read cached files, falling back to network: {ex.Message}");
+                    Debug.LogWarning($"[EgoLinkAvatar] Failed to read cached files, falling back to network: {ex.Message}");
                 }
             }
 
@@ -116,7 +116,7 @@ namespace Donkey
                 }
                 catch (Exception ex)
                 {
-                    Debug.LogError($"[DonkeyAvatar] Failed to cache avatar body: {ex.Message}");
+                    Debug.LogError($"[EgoLinkAvatar] Failed to cache avatar body: {ex.Message}");
                 }
             }
         }
@@ -171,7 +171,7 @@ namespace Donkey
                 }
                 catch (Exception ex)
                 {
-                    Debug.LogError($"[DonkeyAvatar] Failed to cache clothing: {ex.Message}");
+                    Debug.LogError($"[EgoLinkAvatar] Failed to cache clothing: {ex.Message}");
                 }
             }
         }
@@ -219,7 +219,7 @@ namespace Donkey
                 }
                 catch (Exception ex)
                 {
-                    Debug.LogError($"[DonkeyAvatar] Failed to cache hair: {ex.Message}");
+                    Debug.LogError($"[EgoLinkAvatar] Failed to cache hair: {ex.Message}");
                 }
             }
         }
