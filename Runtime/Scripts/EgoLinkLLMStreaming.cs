@@ -25,7 +25,7 @@ namespace Yvonta
     {
         public delegate void SentenceReceivedHandler(string sentence);
 
-        [SerializeField] private string defaultApiUrl = "https://yvonta.com/appapi/v2/llm.php";
+        [SerializeField] private string defaultApiUrl = "https://yvonta.net/appapi/v2/llm.php";
         [SerializeField] private string modelName = "gemma2:2b";
         
         [TextArea(3, 5)]
