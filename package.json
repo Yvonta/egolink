@@ -1,0 +1,20 @@
+{
+  "name": "com.yvonta.egolink",
+  "version": "0.0.1",
+  "displayName": "Egolink AI Character Generator",
+  "description": "A comprehensive Unity API client for generating AI characters, complete with real-time avatar creation, speech processing (TTS/STT), LLM responses, and full voice- and persona cloning.",
+  "unity": "6000.0",
+  "unityRelease": "3f1",
+  "author": {
+    "name": "Dirk Jan Buter",
+    "email": "dirkjan@yvonta.com",
+    "url": "https://yvonta.com"
+  },
+  "keywords": [
+    "ai",
+    "avatar",
+    "speech-to-text",
+    "text-to-speech",
+    "llm"
+  ]
+}
