@@ -4,6 +4,7 @@ using System.IO;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Networking;
+using System.Text;
 
 namespace Yvonta
 {
@@ -13,6 +14,7 @@ namespace Yvonta
         private readonly string _clothingUrl;
         private readonly string _hairUrl;
         private readonly EgoLinkSession _session;
+        private EgoLinkRemoteStorageApiClient _remoteStorage;
 
         public string AvatarId { get; private set; }
         public byte[] AvatarGlbData { get; private set; }
@@ -25,21 +27,23 @@ namespace Yvonta
             public byte[] GlbData { get; set; }
         }
 
-        public EgoLinkAvatar(string avatarGenUrl, string clothingUrl, string hairUrl, EgoLinkSession session)
+        public EgoLinkAvatar(string avatarGenUrl, string clothingUrl, string hairUrl, EgoLinkSession session, EgoLinkJsonRpcClient rpcClient)
         {
             _avatarGenUrl = avatarGenUrl;
             _clothingUrl = clothingUrl;
             _hairUrl = hairUrl;
             _session = session;
+
+            _remoteStorage = new EgoLinkRemoteStorageApiClient(rpcClient);
         }
 
         /// <summary>
         /// Tries to load the avatar, clothing, and hair from local persistent storage cache.
         /// Returns true if all required cached files are successfully loaded.
         /// </summary>
-        public bool TryLoadFromCache(string clothingName, string hairName, float gender, float age, float weight)
+        public async Task<bool> TryLoadFromCache(string clothingName, string hairName, float gender, float age, float weight)
         {
-            string avatarCachePath = Path.Combine(Application.persistentDataPath, $"avatar_body_{gender}_{age}_{weight}.glb");
+            /*string avatarCachePath = Path.Combine(Application.persistentDataPath, $"avatar_body_{gender}_{age}_{weight}.glb");
             string clothingCachePath = Path.Combine(Application.persistentDataPath, $"clothing_{clothingName}.glb");
             string hairCachePath = Path.Combine(Application.persistentDataPath, $"hair_{hairName}.glb");
 
@@ -65,6 +69,41 @@ namespace Yvonta
                 {
                     Debug.LogWarning($"[EgoLinkAvatar] Failed to read cached files, falling back to network: {ex.Message}");
                 }
+            }*/
+
+            try
+            {
+                // 1. Fetch & Validate Body
+                var avatarR = await _remoteStorage.GetDataAsync("body", "avatar");
+                if(avatarR?.data?.value == null)
+                {
+                    return false;
+                }
+                AvatarGlbData = Convert.FromBase64String(avatarR.data.value); // Use Base64 for GLB binary data
+                
+                // 2. Fetch & Validate Clothing
+                var clothingR = await _remoteStorage.GetDataAsync("clothing", "avatar");
+                if(clothingR?.data?.value == null)
+                {
+                    return false;
+                }
+                byte[] clothingData = Convert.FromBase64String(clothingR.data.value);
+                ClothingItems.Clear();
+                ClothingItems.Add(new ClothingItem { Name = clothingName, GlbData = clothingData });
+            
+                // 3. Fetch & Validate Hair
+                var hairR = await _remoteStorage.GetDataAsync("hair", "avatar");
+                if (hairR?.data?.value == null)
+                {
+                    return false;
+                }
+                HairGlbData = Convert.FromBase64String(hairR.data.value);
+            
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError($"API Error loading from cache: {ex.Message}");
             }
 
             return false;
@@ -72,6 +111,8 @@ namespace Yvonta
 
         public async Task GenerateAvatarAsync(byte[] imageBytes, float gender = 0.0f, float age = 0.8f, float weight = 0.2f)
         {
+
+ 
             List<IMultipartFormSection> formData = new List<IMultipartFormSection>
             {
                 new MultipartFormDataSection("gender", gender.ToString(System.Globalization.CultureInfo.InvariantCulture)),
@@ -109,7 +150,7 @@ namespace Yvonta
                 }
 
                 // Save avatar body to cache
-                try
+                /*try
                 {
                     string avatarCachePath = Path.Combine(Application.persistentDataPath, $"avatar_body_{gender}_{age}_{weight}.glb");
                     File.WriteAllBytes(avatarCachePath, AvatarGlbData);
@@ -117,6 +158,16 @@ namespace Yvonta
                 catch (Exception ex)
                 {
                     Debug.LogError($"[EgoLinkAvatar] Failed to cache avatar body: {ex.Message}");
+                }*/
+
+                try
+                {
+                    await _remoteStorage.PutCatAsync("avatar");
+                    var putResult = await _remoteStorage.PutDataAsync("body", "avatar", "glb", AvatarGlbData);
+                }
+                catch (Exception ex)
+                {
+                    Debug.LogError($"API Error: {ex.Message}");
                 }
             }
         }
@@ -164,7 +215,7 @@ namespace Yvonta
                 });
 
                 // Save clothing to cache
-                try
+                /*try
                 {
                     string clothingCachePath = Path.Combine(Application.persistentDataPath, $"clothing_{clothingName}.glb");
                     File.WriteAllBytes(clothingCachePath, clothingData);
@@ -172,6 +223,15 @@ namespace Yvonta
                 catch (Exception ex)
                 {
                     Debug.LogError($"[EgoLinkAvatar] Failed to cache clothing: {ex.Message}");
+                }*/
+
+                try
+                {
+                    var putResult = await _remoteStorage.PutDataAsync("clothing", "avatar", "glb", clothingData);
+                }
+                catch (Exception ex)
+                {
+                    Debug.LogError($"API Error: {ex.Message}");
                 }
             }
         }
@@ -212,7 +272,7 @@ namespace Yvonta
                 HairGlbData = www.downloadHandler.data;
 
                 // Save hair to cache
-                try
+                /*try
                 {
                     string hairCachePath = Path.Combine(Application.persistentDataPath, $"hair_{hairName}.glb");
                     File.WriteAllBytes(hairCachePath, HairGlbData);
@@ -220,6 +280,15 @@ namespace Yvonta
                 catch (Exception ex)
                 {
                     Debug.LogError($"[EgoLinkAvatar] Failed to cache hair: {ex.Message}");
+                }*/
+
+                try
+                {
+                    var putResult = await _remoteStorage.PutDataAsync("hair", "avatar", "glb", HairGlbData);
+                }
+                catch (Exception ex)
+                {
+                    Debug.LogError($"API Error: {ex.Message}");
                 }
             }
         }

@@ -97,6 +97,8 @@ namespace Yvonta
 
                 // Deserialize JSON-RPC Response wrapper
                 string jsonResponse = webRequest.downloadHandler.text;
+                Debug.Log($"Raw Response: {jsonResponse}");
+
                 var response = JsonUtility.FromJson<JsonRpcResponse<TResult>>(jsonResponse);
 
                 // Handle JSON-RPC level errors returned by the server
@@ -104,7 +106,7 @@ namespace Yvonta
                 {
                     throw new JsonRpcException(response.error.code, response.error.message);
                 }
-
+            
                 return response.result;
             }
         }

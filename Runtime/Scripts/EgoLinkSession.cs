@@ -77,7 +77,7 @@ namespace Yvonta
     }
 
     // --- Refactored Session Service ---
-
+    
     public class EgoLinkSession
     {
         private readonly EgoLinkJsonRpcClient _rpcClient;
@@ -85,9 +85,9 @@ namespace Yvonta
 
         public string StoredCookie => _storedSessionId;
 
-        public EgoLinkSession(string serverUrl)
+        public EgoLinkSession(EgoLinkJsonRpcClient rpcClient)
         {
-            _rpcClient = new EgoLinkJsonRpcClient(serverUrl);
+            _rpcClient = rpcClient;
         }
 
         public async Task<UserStatsResult> UserStatsAsync()
