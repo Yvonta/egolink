@@ -27,7 +27,20 @@ namespace Yvonta
     public class EmptyParams { }
 
     // --- Response Data DTOs ---
+    [Serializable]
+    public class UserBalanceResultData
+    {
+        public long balance;
+    }
 
+    [Serializable]
+    public class  UserBalanceResult
+    {
+        public int code;
+        public string message;
+        public UserBalanceResultData data;
+    }
+    
     [Serializable]
     public class LoginResultData
     {
@@ -112,6 +125,12 @@ namespace Yvonta
             }
 
             return result;
+        }
+
+        public async Task<long> BalanceAsync()
+        {
+            UserBalanceResult result = await _rpcClient.SendRequestAsync<EmptyParams, UserBalanceResult>("balance", new EmptyParams());
+            return result.data.balance;
         }
 
         public async Task<bool> LogoutAsync()
