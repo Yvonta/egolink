@@ -95,7 +95,7 @@ namespace Yvonta
                 request.uploadHandler = new UploadHandlerRaw(payloadBytes);
                 request.uploadHandler.contentType = "application/json";
 
-                string sessionId = session != null ? session.StoredCookie : EgoLinkSessionSave.LoadSession();
+                string sessionId = session != null ? session.StoredCookie : null;
                 if (!string.IsNullOrEmpty(sessionId))
                 {
                     string cookieHeader = sessionId.StartsWith("SESSION=") ? sessionId : $"SESSION={sessionId}";

@@ -88,7 +88,6 @@ namespace Yvonta
         public EgoLinkSession(string serverUrl)
         {
             _rpcClient = new EgoLinkJsonRpcClient(serverUrl);
-            LoadSessionFromDisk();
         }
 
         public async Task<UserStatsResult> UserStatsAsync()
@@ -110,7 +109,6 @@ namespace Yvonta
             if (result?.data?.sessionid != null)
             {
                 _storedSessionId = result.data.sessionid;
-                EgoLinkSessionSave.SaveSession(_storedSessionId);
             }
 
             return result;
@@ -144,7 +142,6 @@ namespace Yvonta
             if (result?.data?.sessionid != null)
             {
                 _storedSessionId = result.data.sessionid;
-                EgoLinkSessionSave.SaveSession(_storedSessionId);
             }
 
             return result;
@@ -153,21 +150,7 @@ namespace Yvonta
         public void ClearSession()
         {
             _storedSessionId = null;
-            EgoLinkSessionSave.ClearSession();
             Debug.Log("[EgoLinkSession] Session cleared.");
-        }
-
-        private void LoadSessionFromDisk()
-        {
-            _storedSessionId = EgoLinkSessionSave.LoadSession();
-            if (_storedSessionId != null)
-            {
-                Debug.Log($"[EgoLinkSession] Loaded Session ID from Disk: {_storedSessionId}");
-            }
-            else
-            {
-                Debug.Log("[EgoLinkSession] New session!");
-            }
         }
     }
 }

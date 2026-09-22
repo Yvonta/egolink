@@ -40,7 +40,7 @@ public class EgoLinkVoiceCloning
 
         using (UnityWebRequest request = UnityWebRequest.Post(serverUrl, form))
         {
-            string sessionId = session != null ? session.StoredCookie : EgoLinkSessionSave.LoadSession();
+            string sessionId = session != null ? session.StoredCookie : null;
             if (!string.IsNullOrEmpty(sessionId))
             {
                 string cookieHeader = sessionId.StartsWith("SESSION=") ? sessionId : $"SESSION={sessionId}";

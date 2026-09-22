@@ -8,7 +8,7 @@ namespace Yvonta
 {
     public class EgoLinkTTS : MonoBehaviour
     {
-        string serverUrl = "https://yvonta.net/appapi/v2/tts.php";
+        string serverUrl = "https://yvonta.com/appapi/v2/tts.php";
         
         private string voice = "Kees";
 
@@ -78,11 +78,11 @@ namespace Yvonta
                         : $"SESSION={session.StoredCookie}";
 
                     www.SetRequestHeader("Cookie", cookieHeader);
-                    Debug.Log($"[EgoLinkSTT] Sending Header -> Cookie: {cookieHeader}");
+                    Debug.Log($"[EgoLinkTTS] Sending Header -> Cookie: {cookieHeader}");
                 }
                 else
                 {
-                    Debug.LogWarning("[EgoLinkSTT] Request sent without session cookie! (Session was null or empty)");
+                    Debug.LogWarning("[EgoLinkTTS] Request sent without session cookie! (Session was null or empty)");
                 }
 
                 yield return www.SendWebRequest();
