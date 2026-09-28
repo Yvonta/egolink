@@ -58,11 +58,13 @@ namespace Yvonta
         private readonly string _endpointUrl;
         private readonly int _timeoutSeconds;
         private int _requestIdCounter = 1;
+        private string _apiToken;
 
-        public EgoLinkJsonRpcClient(string endpointUrl, int timeoutSeconds = 10)
+        public EgoLinkJsonRpcClient(string endpointUrl, string apiToken, int timeoutSeconds = 10)
         {
             _endpointUrl = endpointUrl;
             _timeoutSeconds = timeoutSeconds;
+            _apiToken = apiToken;
         }
 
         /// <summary>
@@ -80,6 +82,7 @@ namespace Yvonta
                 webRequest.uploadHandler = new UploadHandlerRaw(bodyRaw);
                 webRequest.downloadHandler = new DownloadHandlerBuffer();
                 webRequest.SetRequestHeader("Content-Type", "application/json");
+                webRequest.SetRequestHeader("Api-Token", _apiToken);
                 webRequest.timeout = _timeoutSeconds;
 
                 // Send request asynchronously using Unity's async operation awaiter

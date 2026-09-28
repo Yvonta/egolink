@@ -33,15 +33,15 @@ namespace Yvonta
 
         private StringBuilder buffer = new StringBuilder();
         private StringBuilder currentAssistantResponse = new StringBuilder();
-        private EgoLinkSession session;
+        private string apiToken;
 
         // Stores conversation history
         private List<ChatMessage> conversationHistory = new List<ChatMessage>();
 
-        public void Initialize(EgoLinkSession activeSession)
+        public void Initialize(string apiToken)
         {
-            this.session = activeSession;
-            Debug.Log($"[EgoLinkLLMStreaming] Initialized with session instance: {(session != null ? "Valid" : "Null")}");
+            this.apiToken = apiToken;
+            Debug.Log($"[EgoLinkLLMStreaming] Initialized with API token");
         }
 
         /// <summary>
@@ -95,15 +95,10 @@ namespace Yvonta
                 request.uploadHandler = new UploadHandlerRaw(payloadBytes);
                 request.uploadHandler.contentType = "application/json";
 
-                string sessionId = session != null ? session.StoredCookie : null;
-                if (!string.IsNullOrEmpty(sessionId))
-                {
-                    string cookieHeader = sessionId.StartsWith("SESSION=") ? sessionId : $"SESSION={sessionId}";
-                    request.SetRequestHeader("Cookie", cookieHeader);
-                }
-
                 SentenceDownloadHandler streamHandler = new SentenceDownloadHandler(onSentenceReady, buffer, currentAssistantResponse);
                 request.downloadHandler = streamHandler;
+
+                request.SetRequestHeader("Api-Token", apiToken);
 
                 yield return request.SendWebRequest();
 
