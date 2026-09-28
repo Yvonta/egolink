@@ -9,11 +9,11 @@ namespace Yvonta
 public class EgoLinkVoiceCloning
 {
     private string serverUrl;
-    private EgoLinkSession session;
+    private string apiToken;
 
-    public void Initialize(EgoLinkSession session, string url)
+    public void Initialize(string apiToken, string url)
     {
-        this.session = session;
+        this.apiToken = apiToken;
         this.serverUrl = url;
     }
 
@@ -40,12 +40,7 @@ public class EgoLinkVoiceCloning
 
         using (UnityWebRequest request = UnityWebRequest.Post(serverUrl, form))
         {
-            string sessionId = session != null ? session.StoredCookie : null;
-            if (!string.IsNullOrEmpty(sessionId))
-            {
-                string cookieHeader = sessionId.StartsWith("SESSION=") ? sessionId : $"SESSION={sessionId}";
-                request.SetRequestHeader("Cookie", cookieHeader);
-            }
+            request.SetRequestHeader("Api-Token", apiToken);
             
             // Wait for request completion asynchronously
             await SendRequestAsync(request);

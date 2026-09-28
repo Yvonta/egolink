@@ -23,11 +23,11 @@ namespace Yvonta
 
         public int GetBufferedClipCount() => playQueue.Count;
 
-        private EgoLinkSession session;
+        private string apiToken;
 
-        public void Initialize(EgoLinkSession session)
+        public void Initialize(string apiToken)
         {
-            this.session = session;
+            this.apiToken = apiToken;
         }
 
         public void SetVoice(string voice)
@@ -69,22 +69,9 @@ namespace Yvonta
                 DownloadHandlerAudioClip dh = new DownloadHandlerAudioClip(string.Empty, AudioType.MPEG);
                 dh.streamAudio = false;
                 www.downloadHandler = dh;
-
-                // Ensure session cookie is properly formatted and attached
-                if (session != null && !string.IsNullOrEmpty(session.StoredCookie))
-                {
-                    string cookieHeader = session.StoredCookie.StartsWith("SESSION=") 
-                        ? session.StoredCookie 
-                        : $"SESSION={session.StoredCookie}";
-
-                    www.SetRequestHeader("Cookie", cookieHeader);
-                    Debug.Log($"[EgoLinkTTS] Sending Header -> Cookie: {cookieHeader}");
-                }
-                else
-                {
-                    Debug.LogWarning("[EgoLinkTTS] Request sent without session cookie! (Session was null or empty)");
-                }
-
+                
+                www.SetRequestHeader("Api-Token", apiToken);
+                
                 yield return www.SendWebRequest();
 
                 if (www.result == UnityWebRequest.Result.Success && www.downloadHandler.data != null && www.downloadHandler.data.Length > 0)

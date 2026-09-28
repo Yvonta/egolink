@@ -13,10 +13,10 @@ namespace Yvonta
         private readonly string defaultModel;
         private readonly int timeout;
         private readonly MonoBehaviour coroutineRunner;
-        private readonly EgoLinkSession session;
+        private readonly string apiToken;
 
         public EgoLinkSTT(
-            EgoLinkSession session,
+            string apiToken,
             string apiUrl, 
             string defaultLanguage, 
             string defaultModel, 
@@ -28,7 +28,7 @@ namespace Yvonta
             this.defaultModel = defaultModel;
             this.timeout = timeout;
             this.coroutineRunner = coroutineRunner;
-            this.session = session;
+            this.apiToken = apiToken;
         }
 
         public void SendAudioForTranscription(
@@ -107,21 +107,8 @@ private IEnumerator PostAudioCoroutine(
     {
         request.timeout = timeout;
 
-        // Ensure session cookie is properly formatted and attached
-        if (session != null && !string.IsNullOrEmpty(session.StoredCookie))
-        {
-            string cookieHeader = session.StoredCookie.StartsWith("SESSION=") 
-                ? session.StoredCookie 
-                : $"SESSION={session.StoredCookie}";
-
-            request.SetRequestHeader("Cookie", cookieHeader);
-            Debug.Log($"[EgoLinkSTT] Sending Header -> Cookie: {cookieHeader}");
-        }
-        else
-        {
-            Debug.LogWarning("[EgoLinkSTT] Request sent without session cookie! (Session was null or empty)");
-        }
-
+        request.SetRequestHeader("Api-Token", apiToken);
+    
         yield return request.SendWebRequest();
 
         if (request.result != UnityWebRequest.Result.Success)

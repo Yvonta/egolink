@@ -46,11 +46,11 @@ namespace Yvonta
             }
         }
 
-        public void Initialize(EgoLinkSession session, float pauseBetweenSentences = 0.2f, float pauseBetweenParagraphs = 0.6f)
+        public void Initialize(string apiToken, float pauseBetweenSentences = 0.2f, float pauseBetweenParagraphs = 0.6f)
         {
             this.pauseBetweenSentences = pauseBetweenSentences;
             this.pauseBetweenParagraphs = pauseBetweenParagraphs;
-            EgoLinkTTS.Initialize(session);
+            EgoLinkTTS.Initialize(apiToken);
         }
 
         public void AddSentence(string sentence)
