@@ -29,14 +29,17 @@ namespace Yvonta
         [SerializeField] private string modelName = "gemma2:2b";
         
         [TextArea(3, 5)]
-        [SerializeField] private string systemPrompt = "You are a helpful assistant.";
+        [SerializeField] private string systemPrompt = null;
+
+        private string personaName = null; 
+        private Dictionary<string, string> personaVars = new Dictionary<string, string>();         
 
         private StringBuilder buffer = new StringBuilder();
         private StringBuilder currentAssistantResponse = new StringBuilder();
         private string apiToken;
 
         // Stores conversation history
-        private List<ChatMessage> conversationHistory = new List<ChatMessage>();
+        public List<ChatMessage> conversationHistory = new List<ChatMessage>();
 
         public void Initialize(string apiToken)
         {
@@ -47,9 +50,19 @@ namespace Yvonta
         /// <summary>
         /// Update or change the system prompt dynamically.
         /// </summary>
-        public void SetSystemPrompt(string newSystemPrompt)
+        public void SetSystemPrompt(string systemPrompt)
         {
-            systemPrompt = newSystemPrompt;
+            this.systemPrompt = systemPrompt;
+        }
+        
+        public void SetPersonaName(string personaName)
+        {
+            this.personaName = personaName;
+        }
+
+        public void AddPersonaVar(string key, string value)
+        {
+            this.personaVars[key] = value;
         }
 
         /// <summary>
@@ -84,10 +97,12 @@ namespace Yvonta
                 fullMessages.Add(new ChatMessage("system", systemPrompt));
             }
 
-            fullMessages.AddRange(conversationHistory);
+            fullMessages.AddRange(conversationHistory);    
+
             fullMessages.Add(new ChatMessage("user", userPrompt));
 
             string jsonPayload = BuildChatJsonPayload(modelName, fullMessages);
+            Debug.Log(jsonPayload);
             byte[] payloadBytes = Encoding.UTF8.GetBytes(jsonPayload);
 
             using (UnityWebRequest request = new UnityWebRequest(targetUrl, "POST"))
@@ -122,6 +137,25 @@ namespace Yvonta
         {
             StringBuilder sb = new StringBuilder();
             sb.Append("{");
+            if(this.personaName != null)
+            {
+                sb.Append($"\"personaName\":\"{EscapeJson(this.personaName)}\",");
+            }
+            sb.Append("\"personaVars\":{");
+            bool first = true;
+            foreach(KeyValuePair<string, string> item in this.personaVars)
+            {
+                if (!first)
+                {
+                    sb.Append(",");
+                }
+                
+                // Key is quoted; integer Value is unquoted and converted to string
+                sb.Append($"\"{EscapeJson(item.Key)}\":\"{EscapeJson(item.Value)}\"");
+                first = false;
+            }
+            sb.Append("},");
+
             sb.Append($"\"model\":\"{EscapeJson(model)}\",");
             sb.Append("\"stream\":true,");
             sb.Append("\"messages\":[");
